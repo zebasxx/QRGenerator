@@ -1,0 +1,7 @@
+services:
+  qr-generator:
+    build: .
+    volumes:
+      - ./output:/app/output
+    environment:
+      - PYTHONUNBUFFERED=1 
