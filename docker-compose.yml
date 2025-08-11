@@ -1,7 +1,12 @@
 services:
   qr-generator:
     build: .
+    ports:
+      - "8000:8000"
     volumes:
       - ./output:/app/output
+      - ./input:/app/input
     environment:
-      - PYTHONUNBUFFERED=1 
+      - PYTHONUNBUFFERED=1
+      - PORT=8000
+      - INPUT_FILE=/app/input/input.txt 

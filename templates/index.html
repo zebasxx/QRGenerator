@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QR Generator</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #0b1220;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #2563eb;
+      --border: #1f2937;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .panel {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    .top-panel form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    label { font-weight: 600; color: var(--muted); }
+    textarea, input[type="text"] {
+      width: 100%;
+      min-height: 120px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0a0f1b;
+      color: var(--text);
+      resize: vertical;
+      font-size: 14px;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-start;
+    }
+    button {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid #1e40af;
+      background: linear-gradient(180deg, #1d4ed8, #1e40af);
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { filter: brightness(1.05); }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .notes {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .qr-view {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0a0f1b;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      min-height: 300px;
+    }
+    .qr-view img {
+      width: 300px;
+      height: 300px;
+      image-rendering: pixelated;
+    }
+    .placeholder { color: var(--muted); }
+    
+    .middle-panel {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    
+    .formatting-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .formatting-controls label {
+      font-weight: 600;
+      color: var(--muted);
+      margin-right: 8px;
+    }
+    
+    .formatting-controls select {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #0a0f1b;
+      color: var(--text);
+      font-size: 14px;
+    }
+    
+    .formatting-controls button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid #1e40af;
+      background: linear-gradient(180deg, #1d4ed8, #1e40af);
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    @media (max-width: 800px) { 
+      .bottom-grid { grid-template-columns: 1fr; }
+      .formatting-controls { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+  
+  <script>
+    function applyFontSize() {
+      const fontSize = document.getElementById('font_size').value;
+      const qrText = document.getElementById('qr_text');
+      const notes = document.getElementById('notes');
+      
+      notes.style.fontSize = fontSize + 'px';
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="panel top-panel">
+      <form method="post">
+        <div>
+          <label for="qr_text">Text to encode in QR</label>
+          <textarea id="qr_text" name="qr_text" placeholder="Enter text here..." required>{{ qr_text }}</textarea>
+        </div>
+        <div class="actions">
+          <button type="submit">Generate QR</button>
+        </div>
+
+        <div class="panel middle-panel">
+          <div class="formatting-controls">
+            <label for="font_size">Font Size:</label>
+            <select id="font_size" name="font_size">
+              <option value="12">Small (12px)</option>
+              <option value="16" selected>Small (16px)</option>
+              <option value="20">Medium (20px)</option>
+              <option value="24">Medium Large (24px)</option>
+              <option value="28">Large (28px)</option>
+              <option value="32">Large (32px)</option>
+              <option value="36">Huge (36px)</option>
+              <option value="40">Huge (40px)</option>
+            </select>
+            <button type="button" onclick="applyFontSize()">Apply Formatting</button>
+          </div>
+        </div>
+
+        <div class="panel bottom-grid" style="margin-top: 12px;">
+          <div class="qr-view">
+            {% if qr_data_uri %}
+              <div style="text-align:center;">
+                <img src="{{ qr_data_uri }}" alt="QR Code" />
+              </div>
+            {% else %}
+              <div class="placeholder">QR preview will appear here after you click "Generate QR"</div>
+            {% endif %}
+          </div>
+          <div class="notes">
+            <textarea id="notes" name="notes" placeholder="Write your notes here..." style="min-height: 300px;">{{ notes }}</textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html> 

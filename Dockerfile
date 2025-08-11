@@ -8,12 +8,17 @@ COPY requirements.txt .
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Create output directory
-RUN mkdir -p output
+# Create required directories
+RUN mkdir -p output input
 
 # Copy the application code
 COPY app.py .
-COPY input/input.txt .
+# (Optional) You can mount ./input via docker-compose; no default file copied
+COPY templates/ ./templates/
 
-# Run the application
+# Expose web port
+ENV PORT=8000
+EXPOSE 8000
+
+# Run the application (Flask dev server is fine for this small tool)
 CMD ["python", "app.py"] 
