@@ -71,26 +71,41 @@
 
     .bottom-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(280px, 1fr) 1fr;
       gap: 16px;
+      align-items: stretch;
     }
     .notes {
       display: flex;
       flex-direction: column;
       gap: 8px;
+      height: 100%;
+    }
+    .notes textarea {
+      flex: 1 1 auto;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      box-sizing: border-box;
     }
     .qr-view {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #0a0f1b;
+      background: #ffffff;
       border: 1px dashed var(--border);
       border-radius: 8px;
-      min-height: 300px;
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      height: auto;
+      overflow: hidden;
     }
     .qr-view img {
-      width: 300px;
-      height: 300px;
+      width: 90%;
+      height: auto;
+      max-width: 480px;
+      max-height: 90%;
       image-rendering: pixelated;
     }
     .placeholder { color: var(--muted); }
